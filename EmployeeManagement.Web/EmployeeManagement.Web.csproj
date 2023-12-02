@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>preview</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+        <PackageReference Include="Blazor.Bootstrap" Version="1.10.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.13" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.10" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.10" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.11" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\images\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Pages\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Pages\**" />
+      <Compile Include="Pages\EditEmployeeBase.cs" />
+      <Compile Include="Pages\EmployeeDetailsBase.cs" />
+      <Compile Include="Pages\LoginBase.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\AddEmployee.razor" />
+      <_ContentIncludedByDefault Remove="Pages\EmployeeDetails.razor" />
+      <_ContentIncludedByDefault Remove="Pages\EmployeeList.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Home.razor" />
+    </ItemGroup>
+</Project>

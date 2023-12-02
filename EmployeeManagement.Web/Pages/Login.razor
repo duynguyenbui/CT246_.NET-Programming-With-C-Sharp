@@ -1,0 +1,38 @@
+@page "/login"
+@using Microsoft.AspNetCore.Components;
+@inherits LoginBase
+
+@if (loginFailed)
+{
+    <p style="color: red;">Login Failed.</p>
+}
+
+<form class="form" @onsubmit="SubmitLogin">
+    <div class="d-flex align-items-center justify-content-center">
+        <div class="rounded-lg shadow-lg bg-white p-4 space-y-4 border border-secondary" style="width: 400px">
+            <div class="text-center">
+                <h1 class="display-4">
+                    <i class="oi oi-lock-locked"></i>
+                </h1>
+                <p class="text-secondary">
+                    By logging in, you accept our terms.
+                </p>
+            </div>
+            <div class="mb-3 form-group">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" @bind="LoginDto.Username" placeholder="m@example.com" required>
+            </div>
+            <div class="mb-3 form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" @bind="LoginDto.Password" id="password" placeholder="**********" required>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <hr class="flex-grow border-secondary">
+                <hr class="flex-grow border-secondary">
+            </div>
+            <button type="submit" class="btn btn-primary gap-5 w-100">
+                Login
+            </button>
+        </div>
+    </div>
+</form>

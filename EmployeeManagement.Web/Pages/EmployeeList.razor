@@ -1,0 +1,70 @@
+@page "/EmployeeList"
+@using EmployeeManagement.Web.Models
+@using EmployeeManagement.Web.Services.Contracts
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+
+<div class="container">
+    <h3 class="text-start mt-4">Employee List</h3>
+    <div class="row justify-content-start mt-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search by Employee Name"
+                       aria-label="Search by title" aria-describedby="button-addon2"
+                       @bind-value="SearchText" @bind-value:event="oninput">
+                <button class="btn btn-outline-secondary border-0" @onclick="@ReloadEmployees" type="button" id="button-addon2">
+                    <i class="oi oi-reload"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="row d-flex flex-wrap">
+        @if (!(Employees ?? Array.Empty<Employee>()).Any())
+        {
+            <div class="col-md-4 mb-4 text-center spinner-container">
+                <div class="spinner"></div>
+            </div>
+        }
+        else
+        {
+            @foreach (var employee in FilteredEmployees)
+            {
+                <EmployeeCard Employee="employee"/>
+            }
+        }
+    </div>
+</div>
+
+@code {
+
+    [Inject]
+    public required IEmployeeService EmployeeService { set; get; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    public IEnumerable<Employee> Employees { set; get; }
+
+    public string SearchText = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Employees = (await EmployeeService.GetEmployees() ?? Array.Empty<Employee>()).ToList();
+    }
+
+    List<Employee> FilteredEmployees => Employees
+        .Where(emp => emp.FirstName.ToLower().Contains(SearchText.ToLower()) ||
+                      emp.LastName.ToLower().Contains(SearchText.ToLower()))
+        .ToList();
+
+    public async Task ReloadEmployees()
+    {
+        Employees = Enumerable.Empty<Employee>();
+        Employees = (await EmployeeService.GetEmployees() ?? Array.Empty<Employee>()).ToList();
+    }
+
+}

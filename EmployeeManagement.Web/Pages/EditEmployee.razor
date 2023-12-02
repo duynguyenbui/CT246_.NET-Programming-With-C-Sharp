@@ -1,0 +1,84 @@
+@page "/EditEmployee/{Id:int}"
+@using EmployeeManagement.Web.Models
+@using Microsoft.AspNetCore.Authorization
+@inherits EditEmployeeBase
+@attribute [Authorize(Roles = "Admin")]
+
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Edit Employee</h3>
+    @if (Employee != null)
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <EditForm Model="Employee" OnSubmit="UpdateEmployee" class="form-horizontal">
+                    <div class="form-group row mb-4">
+                        <label for="FirstName" class="col-sm-2 col-form-label">First Name</label>
+                        <div class="col-sm-10">
+                            <InputText id="FirstName" @bind-Value="Employee.FirstName" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="LastName" class="col-sm-2 col-form-label">Last Name</label>
+                        <div class="col-sm-10">
+                            <InputText id="LastName" @bind-Value="Employee.LastName" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="Email" class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-10">
+                            <InputText id="Email" @bind-Value="Employee.Email" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="DateOfBirth" class="col-sm-2 col-form-label">Date of Birth</label>
+                        <div class="col-sm-10">
+                            <InputDate id="DateOfBirth" @bind-Value="Employee.DateOfBirth" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="Gender" class="col-sm-2 col-form-label">Gender</label>
+                        <div class="col-sm-10">
+                            <InputSelect id="Gender" @bind-Value="Employee.Gender" class="form-control">
+                                @foreach (Gender gender in Enum.GetValues(typeof(Gender)))
+                                {
+                                    <option value="@gender">@gender.ToString()</option>
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="DepartmentId" class="col-sm-2 col-form-label">Department</label>
+                        <div class="col-sm-10">
+                            <InputSelect id="DepartmentId" @bind-Value="Employee.DepartmentId" class="form-control">
+                                @foreach (var department in Departments)
+                                {
+                                    <option value="@department.DepartmentId">@department.DepartmentName</option>
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <label for="PhotoPath" class="col-sm-2 col-form-label">Photo Path</label>
+                        <div class="col-sm-10">
+                            <InputText id="PhotoPath" @bind-Value="Employee.PhotoPath" class="form-control"/>
+                        </div>
+                        <img src="@Employee.PhotoPath" class="rounded img-fluid img-thumbnail mt-3 w-50 h-50 mx-auto d-block"/>
+                    </div>
+                    <div class="form-group row text-center">
+                        <div class="col-sm-10 offset-sm-2">
+                            <button type="submit" class="btn btn-primary">Save Employee</button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-4 mb-4 text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+</div>

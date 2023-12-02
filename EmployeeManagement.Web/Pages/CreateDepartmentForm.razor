@@ -1,0 +1,40 @@
+@using EmployeeManagement.Web.Models
+@using EmployeeManagement.Web.Services.Contracts
+@inject IDepartmentService DepartmentService
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
+
+<EditForm Model="CreateDepartmentDto" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="DepartmentName" class="mb-2">Department Name:</label>
+        <InputText id="DepartmentName" class="form-control" @bind-Value="CreateDepartmentDto.DepartmentName" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Create</button>
+</EditForm>
+
+@code {
+    private CreateDepartmentDto CreateDepartmentDto = new CreateDepartmentDto();
+    private string ErrorMessage { get; set; }
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await DepartmentService.CreateDepartment(CreateDepartmentDto);
+        if (response is not null)
+        {
+            NavigationManager.NavigateTo("/DepartmentList", true);
+        }
+        else
+        {
+            ErrorMessage = "There was an error creating the department. Please try again.";
+        }
+    }
+}

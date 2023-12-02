@@ -1,0 +1,59 @@
+@using EmployeeManagement.Web.Services.Contracts
+@using EmployeeManagement.Web.Models
+@using System.Net
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col" class="text-center">#</th>
+        <th scope="col" class="text-center">Department Name</th>
+        <AuthorizeView Roles="Admin">
+            <th scope="col" class="text-center">Action</th>
+        </AuthorizeView>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var department in Departments)
+    {
+        <tr>
+            <th scope="row" class="text-center">@department.DepartmentId</th>
+            <td class="text-center">@department.DepartmentName</td>
+            <AuthorizeView Roles="Admin">
+                <td class="text-center">
+                    <button type="button" class="btn btn-outline-danger" @onclick="() => HandleDeleteDepartment(department.DepartmentId)">Delete</button>
+                </td>
+            </AuthorizeView>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+
+    [Inject]
+    private IDepartmentService DepartmentService { set; get; }
+
+    [Inject]
+    private HttpClient HttpClient { set; get; }
+
+    [Inject]
+    private NavigationManager NavigationManager { set; get; }
+
+    private IEnumerable<Department> Departments { set; get; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Departments = await DepartmentService.GetDepartments();
+    }
+
+    public async Task HandleDeleteDepartment(int id)
+    {
+        var responseMessage = await DepartmentService.DeleteDepartment(id);
+        if (responseMessage.StatusCode == HttpStatusCode.OK)
+        {
+            NavigationManager.NavigateTo("/DepartmentList", ShouldRender());
+        }
+    }
+
+}

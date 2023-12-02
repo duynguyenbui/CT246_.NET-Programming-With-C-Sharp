@@ -1,0 +1,42 @@
+﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<div class="page">
+    <div class="sidebar shadow">
+        <NavMenu/>
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <AuthorizeView>
+                <Authorized>
+                    <i class="oi oi-person m-4"></i>
+                    Hello @Name
+                </Authorized>
+                <NotAuthorized>
+                    <i class="oi oi-lock-locked m-4"></i>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code
+{
+    public string Name { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is {IsAuthenticated: true })
+        {
+            if (user.Identity.Name != null) Name = (user.Identity.Name).ToUpper();
+        }
+        await base.OnInitializedAsync();
+    }
+}

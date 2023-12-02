@@ -1,0 +1,15 @@
+@page "/DepartmentList"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<h2>Department List</h2>
+<p class="text-danger">If you delete department having employees, all employee belong to department also be deleted</p>
+<hr/>
+
+<DepartmentTable />
+
+
+<AuthorizeView Roles="Admin">
+    <hr/>
+    <CreateDepartmentForm/>
+</AuthorizeView>

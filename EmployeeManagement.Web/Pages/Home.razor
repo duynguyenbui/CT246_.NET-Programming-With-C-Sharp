@@ -1,0 +1,38 @@
+@page "/"
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<div class="container">
+    <h3>Home</h3>
+    <p>This software just serves for HR departments</p>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="alert alert-success">
+            You are authorized as an Admin
+        </div>
+    }
+    else if (User.IsInRole("Member"))
+    {
+        <div class="alert alert-success">
+            You are authorized as a Member
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            You are not authorized
+        </div>
+    }
+</div>
+
+@code {
+    protected ClaimsPrincipal User;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        User = authState.User;
+    }
+}

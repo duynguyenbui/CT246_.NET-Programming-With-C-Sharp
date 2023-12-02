@@ -1,0 +1,52 @@
+@page "/UserProfile"
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<div class="container mt-4">
+    @if (userProfileViewModel != null)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">User Information</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Username:</strong> @userProfileViewModel.Username</li>
+                    <li class="list-group-item"><strong>Email:</strong> @userProfileViewModel.Email</li>
+                    <li class="list-group-item"><strong>Roles:</strong> @string.Join(", ", userProfileViewModel.Roles)</li>
+                    <!-- Add other user details as needed -->
+                </ul>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="mt-4">User profile not available.</p>
+    }
+</div>
+
+@code {
+    private UserProfileViewModel userProfileViewModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        userProfileViewModel = new UserProfileViewModel
+        {
+            Username = user.FindFirstValue(ClaimTypes.Name),
+            Email = user.FindFirstValue(ClaimTypes.Email),
+            Roles = user.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList(),
+    // Add other user details as needed
+        };
+    }
+
+    // ViewModel for user profile
+    private class UserProfileViewModel
+    {
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public List<string> Roles { get; set; }
+    // Add other user details as needed
+    }
+}

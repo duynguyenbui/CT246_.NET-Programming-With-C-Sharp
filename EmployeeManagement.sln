@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagement.API", "EmployeeManagement.API\EmployeeManagement.API.csproj", "{408FBD4B-54B1-4048-9093-43101B820399}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeManagement.Web", "EmployeeManagement.Web\EmployeeManagement.Web.csproj", "{AB99C76B-E6E2-4687-B82D-10975BE12473}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{408FBD4B-54B1-4048-9093-43101B820399}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{408FBD4B-54B1-4048-9093-43101B820399}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{408FBD4B-54B1-4048-9093-43101B820399}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{408FBD4B-54B1-4048-9093-43101B820399}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB99C76B-E6E2-4687-B82D-10975BE12473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB99C76B-E6E2-4687-B82D-10975BE12473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB99C76B-E6E2-4687-B82D-10975BE12473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB99C76B-E6E2-4687-B82D-10975BE12473}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

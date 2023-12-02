@@ -1,0 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+using EmployeeManagement.API.Entities;
+namespace EmployeeManagement.API.DTOs;
+
+public class CreateEmployeeDto
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    [EmailAddress]
+    public string Email { get; set; }
+    public DateTime DateOfBirth { get; set; }
+    [Range(0,2)]
+    public Gender Gender { get; set; }
+    public int DepartmentId { get; set; }
+    public IFormFile File { get; set; }
+}

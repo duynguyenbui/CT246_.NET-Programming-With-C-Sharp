@@ -1,0 +1,135 @@
+@page "/AddEmployee"
+@using System.Net.Http.Headers
+@using EmployeeManagement.Web.Models
+@using EmployeeManagement.Web.Services
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+@inject HttpClient Http
+
+<EditForm Model="@employee" OnValidSubmit="@HandleValidSubmit" class="container mt-4">
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Create Employee Form</h2>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="FirstName" class="form-label">First Name</label>
+                    <InputText id="FirstName" @bind-Value="employee.FirstName" class="form-control" placeholder="Enter First Name"/>
+                </div>
+
+                <div class="mb-3">
+                    <label for="LastName" class="form-label">Last Name</label>
+                    <InputText id="LastName" @bind-Value="employee.LastName" class="form-control" placeholder="Enter Last Name"/>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Email" class="form-label">Email</label>
+                    <InputText id="Email" @bind-Value="employee.Email" class="form-control" placeholder="Enter Email"/>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="DateOfBirth" class="form-label">Date of Birth</label>
+                        <InputDate id="DateOfBirth" @bind-Value="employee.DateOfBirth" class="form-control" placeholder="Select Date of Birth"/>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="Gender" class="form-label">Gender</label>
+                        <InputSelect id="Gender" @bind-Value="employee.Gender" class="form-control">
+                            <option value="0">Female</option>
+                            <option value="1">Male</option>
+                        </InputSelect>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="File" class="form-label">Choose File</label>
+                    <InputFile id="File" OnChange="@OnInputFileChange" class="form-control"/>
+                </div>
+                <div class="mb-3">
+                    <label for="DepartmentId" class="form-label">Department Id</label>
+                    <InputSelect id="DepartmentId" @bind-Value="employee.DepartmentId" class="form-control" DisplayName="Department">
+                        @foreach (var department in Departments)
+                        {
+                            <option value="@department.DepartmentId">@department.DepartmentName</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                </div>
+                <div>
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</EditForm>
+
+@if (!string.IsNullOrEmpty(Message))
+{
+    <div class="alert alert-danger mt-3" role="alert">
+        @Message
+    </div>
+}
+
+@code {
+    private CreateEmployeeDto employee = new();
+    private string Message { set; get; }
+    private IEnumerable<Department> Departments { set; get; }
+    
+    // [Inject] public DepartmentService DepartmentService { set; get; }
+    
+    [Inject]
+    private NavigationManager NavigationManager { set; get; }
+
+    [Inject] 
+    public IJSRuntime JsRuntime { set; get; }
+    
+    private async Task HandleValidSubmit()
+    {
+        var content = new MultipartFormDataContent();
+        content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+        content.Add(new StringContent(employee.FirstName), "FirstName");
+        content.Add(new StringContent(employee.LastName), "LastName");
+        content.Add(new StringContent(employee.Email), "Email");
+        content.Add(new StringContent(employee.DateOfBirth.ToString("yyyy-MM-dd")), "DateOfBirth");
+        content.Add(new StringContent(employee.Gender.ToString()), "Gender");
+        content.Add(new StringContent(employee.DepartmentId.ToString()), "DepartmentId");
+        content.Add(new StreamContent(employee.File.OpenReadStream()), "File", employee.File.Name);
+
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetToken());
+        var responseMessage = await Http.PostAsync("api/Employees", content);
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            Message = await responseMessage.Content.ReadAsStringAsync();
+        }
+
+        if (responseMessage.IsSuccessStatusCode) NavigationManager.NavigateTo($"/EmployeeList");
+    }
+
+    private void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        employee.File = e.File;
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetToken());
+        Departments = await Http.GetFromJsonAsync<Department[]>("/api/departments");
+        await base.OnInitializedAsync();
+    }
+    
+    public async Task<string> GetToken()
+    {
+        var token = await JsRuntime.InvokeAsync<string>("localStorageManager.getItem", "jwtToken");
+        return token;
+    }
+
+}

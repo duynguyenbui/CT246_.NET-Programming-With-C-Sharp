@@ -1,0 +1,57 @@
+@using EmployeeManagement.Web.Models
+@using EmployeeManagement.Web.Services.Contracts
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<div class="col-md-4 mb-4">
+    <div class="card h-100 d-flex flex-column">
+        <div class="flex-grow-1">
+            <img class="card-img-top" src="@Employee.PhotoPath" alt="CardImage"/>
+        </div>
+        <div class="card-body align-items-start">
+            <h5 class="card-title">@Employee.FirstName @Employee.LastName</h5>
+            <p class="card-text">
+                Position: @Employee.Department.DepartmentName
+            </p>
+        </div>
+        <div class="card-footer text-center">
+            <a href="/EmployeeDetails/@Employee.EmployeeId" class="btn btn-primary m-1">View</a>
+            @if (User != null && User.IsInRole("Admin"))
+            {
+                <a href="/EditEmployee/@Employee.EmployeeId" class="btn btn-primary">Edit</a>
+                <button class="btn btn-danger m-1" @onclick="async () => await DeleteEmployee(Employee.EmployeeId)">Delete</button>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public Employee Employee { set; get; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    public required IEmployeeService EmployeeService { set; get; }
+
+    private ClaimsPrincipal User;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        User = authState.User;
+    }
+
+    public async Task DeleteEmployee(int employeeId)
+    {
+        var response = await EmployeeService.DeleteEmployee(employeeId);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/EmployeeList", forceLoad: true);
+        }
+    }
+
+}
